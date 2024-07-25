@@ -1,80 +1,47 @@
 #include "minishell.h"
 
-int ft_strlen (char *str)
+int	ft_strlen(char *str)
 {
-    int i;
-    i = 0;
-    if (!str)
-        return (0);
-    while (str[i])
-        i++;
-    return (i);
-}
-char *ft_strdup(char *str)
-{
-    int i;
-    char *cp;
+	int	i;
 
-    i = 0;
-    if (str == NULL)
-        return (NULL);
-    cp = malloc (ft_strlen(str) + 1);
-    if (cp == NULL)
-        return (NULL);
-    while (str[i])
-    {
-        cp[i] = str[i];
-        i++;
-    }
-    cp[i] = '\0';
-    return (cp);
+	i = 0;
+	if (!str)
+		return (0);
+	while (str[i])
+		i++;
+	return (i);
 }
-int count_cmd (t_lexer *lexer)
-{
-    int cont;
-    cont = 0;
-    while (lexer)
-    {
-        if (lexer->token  == pipe1)
-            cont++; 
-        lexer = lexer->next;
-    }
-    return (cont);
-}
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strdup(char *str)
 {
 	int		i;
-	int		j;
-	char	*p;
+	char	*cp;
 
-	j = 0;
 	i = 0;
-    if (!s2)
-        return(s1);
-	if (s1 == NULL)
+	if (str == NULL)
+		return (NULL);
+	cp = malloc(ft_strlen(str) + 1);
+	if (cp == NULL)
+		return (NULL);
+	while (str[i])
 	{
-		p = malloc(ft_strlen(s2) + 1);
-		while (s2[i])
-        {
-            p[i] = s2[i];
-            i++;
-        }
-        p[i] = '\0';
-		return (p);
+		cp[i] = str[i];
+		i++;
 	}
-	p = malloc(ft_strlen(s1) + ft_strlen(s2) + 2);
-	if (p == NULL)
-		return (0);
-	while (s1[j])
-		p[i++] = s1[j++];
-	j = 0;
-	p[i] = ' ';
-	i++;
-	while (s2[j])
-		p[i++] = s2[j++];
-	p[i] = '\0';
-	free(s1);
-	return (p);
+	cp[i] = '\0';
+	return (cp);
+}
+int	count_cmd(t_lexer *lexer)
+{
+	int	cont;
+
+	cont = 0;
+	while (lexer)
+	{
+		if (lexer->token == pipe1)
+			cont++;
+		lexer = lexer->next;
+	}
+	return (cont);
 }
 void	*ft_calloc(size_t count, size_t size)
 {
@@ -96,84 +63,123 @@ void	ft_lstadd_back1(t_file **file, t_file *new)
 		return ;
 	if (*file)
 	{
-        tmp = *file;
+		tmp = *file;
 		while (tmp->next != NULL)
-            tmp = tmp->next;
-        tmp->next = new;
+			tmp = tmp->next;
+		tmp->next = new;
 	}
 	else
 		*file = new;
 }
-void apend_to_file (char *str,t_token token,t_file **file)
+void	apend_to_file(char *str, t_token token, t_file **file)
 {
-    t_file *newfile;
-    int len;
+	t_file	*newfile;
 
-    newfile = ft_calloc (sizeof (t_file),1);
-    if (newfile == NULL)
-        return;
-    newfile->file = str;
-    if (token == inredire)
-        newfile->infile = 1;
-    else if (token == outredire)
-        newfile->outfile = 1;
-    else if (token == herduc)
-        newfile->herdoc = 1;
-    else if (token == apenred)
-        newfile->apend = 1;
-    ft_lstadd_back1(file,newfile);
+	newfile = ft_calloc(sizeof(t_file), 1);
+	if (newfile == NULL)
+		return ;
+	newfile->file = str;
+	if (token == inredire)
+		newfile->infile = 1;
+	else if (token == outredire)
+		newfile->outfile = 1;
+	else if (token == herduc)
+		newfile->herdoc = 1;
+	else if (token == apenred)
+		newfile->apend = 1;
+	ft_lstadd_back1(file, newfile);
+}
+void	apend_to_data(t_data **data, t_file **file, char ***cmd)
+{
+	t_data	*newdata;
+	t_data	*tmp;
 
+	newdata = ft_calloc(sizeof(t_data), 1);
+	if (newdata == NULL)
+		return ;
+	newdata->cmd = *cmd;
+	newdata->file = *file;
+	*file = NULL;
+	tmp = *data;
+	if (*data)
+	{
+		while (tmp->next != NULL)
+			tmp = tmp->next;
+		tmp->next = newdata;
+	}
+	else
+		*data = newdata;
+	*cmd = NULL;
 }
-void apend_to_data (t_data **data,t_file **file,char **cmd)
+
+int	count_str(char **str)
 {
-    t_data *newdata;
-    t_data *tmp;
-    newdata = ft_calloc(sizeof(t_data),1);
-    if (newdata == NULL)
-        return;
-    newdata->cmd = ft_strdup (*cmd);
-    newdata->file = *file;
-    *file = NULL;
-    tmp = *data;
-    if(*data) {
-         while(tmp->next != NULL)
-            tmp = tmp->next;
-        tmp->next = newdata;
-        }
-    else
-        *data = newdata;
-    free (*cmd);
-    *cmd = NULL;
+	int	i;
+
+	i = 0;
+	if (str == NULL)
+		return (0);
+	while (str[i])
+	{
+		i++;
+	}
+	return (i);
 }
-t_data *ft_parsing (t_lexer *lexer, char **env)
+char	**ft_addstring(char **str, char *newstr)
 {
-    t_data *data;
-    char *cmd;
-    cmd = NULL;
-    data = NULL;
-    t_file *file;
-    if (lexer == NULL)
-        return (NULL);
-    int cont = count_cmd (lexer);
-    file = NULL;
-    while (lexer)
-    {
-        if (lexer->token == word && lexer->prev == NULL)
-            cmd = ft_strjoin(cmd,lexer->data);
-        else if (lexer->token == word && lexer->prev->token == inredire)
-                apend_to_file (lexer->data,inredire,&file);
-        else if (lexer->token == word && lexer->prev->token == outredire)
-                apend_to_file (lexer->data,outredire,&file);
-        else if (lexer->token == word && lexer->prev->token == herduc)
-                apend_to_file (lexer->data,herduc,&file);
-        else if (lexer->token == word && lexer->prev->token == apenred)
-                apend_to_file (lexer->data,apenred,&file);
-        else if (lexer->token == pipe1)
-                apend_to_data (&data,&file,&cmd);
-        else if (lexer->token == word)
-            cmd = ft_strjoin(cmd,lexer->data);
-        lexer = lexer->next;
-    }
-    apend_to_data (&data,&file,&cmd);
-    return (data);
+	char	**p;
+	int		cont;
+	int		i;
+
+	i = 0;
+	cont = count_str(str);
+	p = ft_calloc(sizeof(char *), cont + 2);
+	if (p == NULL)
+		return (NULL);
+	while (i < cont)
+	{
+		p[i] = ft_strdup(str[i]);
+		i++;
+	}
+	p[i++] = ft_strdup(newstr);
+	i = 0;
+	while (str && str[i])
+		free(str[i++]);
+	if (str)
+		free(str);
+	return (p);
+}
+t_data	*ft_parsing(t_lexer *lexer, char **env)
+{
+	t_data	*data;
+	char	**cmd;
+	t_file	*file;
+
+	cmd = NULL;
+	data = NULL;
+	(void)env;
+	if (lexer == NULL)
+		return (NULL);
+	file = NULL;
+	while (lexer)
+	{
+		if (lexer->token == word && lexer->prev == NULL)
+			cmd = ft_addstring(cmd, lexer->data);
+		else if (lexer->token == word && lexer->prev->token == inredire)
+			apend_to_file(lexer->data, inredire, &file);
+		else if (lexer->token == word && lexer->prev->token == outredire)
+			apend_to_file(lexer->data, outredire, &file);
+		else if (lexer->token == word && lexer->prev->token == herduc)
+			apend_to_file(lexer->data, herduc, &file);
+		else if (lexer->token == word && lexer->prev->token == apenred)
+			apend_to_file(lexer->data, apenred, &file);
+		else if (lexer->token == pipe1)
+			apend_to_data(&data, &file, &cmd);
+		else if (lexer->token == word)
+			cmd = ft_addstring(cmd, lexer->data);
+		lexer = lexer->next;
+	}
+	apend_to_data(&data, &file, &cmd);
+	free_lexer(lexer);
+	return (data);
 }
