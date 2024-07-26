@@ -28,7 +28,7 @@ char	*expend_it(char *var, char *newstr,t_env *envp)
 	path = ft_getenv(envp,var);
 	free(var);
 	while (path && path[++j])
-		newstr = apend_char_str(newstr, path[j]);
+		 newstr = apend_char_str(newstr, path[j]);
 	return (newstr);
 }
 

@@ -66,6 +66,8 @@ typedef struct s_env
 typedef struct t_data
 {
     char **cmd;
+    char *oldpwd;
+    char *newpwd;
     t_file *file;
     struct t_data *next;
 }t_data;
@@ -96,4 +98,5 @@ char	*check_path(t_var_us var, char **cmd);
 void execut_comand(t_data *data,char **env);
 void ft_setenv(char **env,t_env **envp);
 char *ft_getenv (t_env *env,char *str);
+void	*ft_memcpy(void *dest, const void *src, size_t size);
 #endif
