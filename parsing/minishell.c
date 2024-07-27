@@ -83,10 +83,16 @@ int	main(int ac, char **av, char **env)
 	t_lexer	*lexer;
 	char	*len;
 	t_env *envp;
+	t_export *export;
+	int n;
 	(void)ac;
 	(void)av;
 	//signal(SIGINT,handle_signal);
 	ft_setenv(env,&envp);
+		export = copy_envp(envp);
+	n = count_envp(export);
+	av = cover_sting(export, n);
+	av = sort_av(av);
 	while (1)
 	{
 		
@@ -100,7 +106,7 @@ int	main(int ac, char **av, char **env)
 			lexer = NULL;
 			lexer_phase(len, &lexer,envp);
 			data = ft_parsing(lexer, env);
-			 ft_execution(data, env);
+			 ft_execution(data, env,envp);
 			    // while (data)
 			    // {
 			    //      printf("------------------------------------\n");

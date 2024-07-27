@@ -62,7 +62,12 @@ typedef struct s_env
     char *value;
     struct s_env *next;
 }t_env;
-
+typedef struct s_expo
+{
+    char *var;
+    char *value;
+    struct s_env *next;
+}t_export;
 typedef struct t_data
 {
     char **cmd;
@@ -76,7 +81,7 @@ char  **ft_split (char *str,char c);
 t_data *ft_parsing (t_lexer *lexer, char **env);
 int ft_strlen (char *str);
 int syntax_error(t_lexer **lexer);
-void ft_execution(t_data *data,char **env);
+void ft_execution(t_data *data,char **env,t_env *envp);
 char *ft_strsrch(char *str,char c);
 char	*ft_expending(t_lexer *lexer, char *str, t_token *token,t_env *envp);
 char *apend_char_str (char *str,char c);
@@ -92,6 +97,7 @@ int	count_list(t_data *data);
 void	*ft_calloc(size_t count, size_t size);
 void free_lexer(t_lexer *lexer);
 char	*ft_strdup(char *str);
+
 //exicutiom ------------------
 void	check_file(t_data *data, t_var_us *var);
 char	*check_path(t_var_us var, char **cmd);
@@ -99,4 +105,5 @@ void execut_comand(t_data *data,char **env);
 void ft_setenv(char **env,t_env **envp);
 char *ft_getenv (t_env *env,char *str);
 void	*ft_memcpy(void *dest, const void *src, size_t size);
+void	ft_lstadd_backenv(t_env **env, t_env *new);
 #endif
