@@ -76,6 +76,22 @@ void handle_signal(int sig)
 	rl_redisplay();
 	return;
 }
+void set_env(char **env,t_env **envp)
+{
+	t_env *newenv;
+	if (*env == NULL)
+	{printf ("yes it is workin\n");
+		newenv = ft_calloc (sizeof(t_env),1);
+		if (newenv == NULL)
+			return;
+		newenv->var = ft_strdup("PATH=");
+		newenv->value = ft_strdup("/nfs/homes/oait-bou/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
+		newenv->egnor =1;
+		*envp = newenv;
+	}
+	else
+		ft_setenv(env,envp);
+}
 
 int	main(int ac, char **av, char **env)
 {
@@ -85,8 +101,9 @@ int	main(int ac, char **av, char **env)
 	t_env *envp;
 	(void)ac;
 	(void)av;
+	envp = NULL;
 	//signal(SIGINT,handle_signal);
-	ft_setenv(env,&envp);
+	set_env(env,&envp);
 	while (1)
 	{
 		
@@ -100,7 +117,7 @@ int	main(int ac, char **av, char **env)
 			lexer = NULL;
 			lexer_phase(len, &lexer,envp);
 			data = ft_parsing(lexer, env);
-			 ft_execution(data, env,envp);
+			 ft_execution(data, env,&envp);
 			    // while (data)
 			    // {
 			    //      printf("------------------------------------\n");

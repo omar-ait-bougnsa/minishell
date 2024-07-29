@@ -21,23 +21,36 @@ char *ft_getvar (char *str)
 {
     int i;
     char *newstr;
+    int n;
+
     i = 0;
-    while (str[i] && str[i] != '=')
-        i++;
-    newstr = malloc(i+2);
+    n = 0;
+    while (str[n] && str[n] != '=')
+        n++;
+    if (str[n] == '=')
+        n++;
+    newstr = malloc(n+1);
     if (newstr == NULL)
         return(NULL);
-    i = 0;
-    while (str[i] && str[i] != '=')
+    while (i < n)
     {
         newstr[i] = str[i];
         i++;
     }
-    newstr[i++] = '=';
     newstr[i] = '\0';
     return (newstr);
 }
+// int  check_var (char *var,char *str,t_env *envp)
+// {
+//     while (envp)
+//     {
+//         if (!ft_strcmp(envp->var,var) && str)
+//         {
+            
+//         }
 
+//     }
+// }
 void ft_setenv(char **env,t_env **envp)
 {
     char *str;
@@ -48,20 +61,17 @@ void ft_setenv(char **env,t_env **envp)
     i = 0;
     while (env[i])
     {
-        if(ft_strsrch (env[i],'='))
-        {
         var = ft_getvar(env[i]);
         str = ft_strsrch (env[i],'=');
-        str = ft_strdup(&str[1]);
-        newenv = malloc (sizeof(t_env));
+        if (str)
+            str = ft_strdup(&str[1]);
+      // check_var(var,str,*envp);
+        newenv = ft_calloc (sizeof(t_env),1);
         if (!newenv)
             return;
         newenv->value = str;
         newenv->var = var;
-        newenv->next = NULL;
         ft_lstadd_backenv(envp,newenv);
-        }
         i++;
-    
-}
+    }
 }

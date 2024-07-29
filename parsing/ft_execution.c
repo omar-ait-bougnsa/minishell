@@ -47,24 +47,13 @@ void simple_execut(t_data *data, t_var_us var, char **env)
 		dup2(var.outfd, 1);
 	execve(var.pth, data->cmd, env);
 }
-int ft_strcmp(const char *s1, const char *s2)
+int ft_strcmp(char *s1,char *s2)
 {
-	unsigned char *p1;
-	unsigned char *p2;
-	size_t i;
-
-	p1 = (unsigned char *)s1;
-	p2 = (unsigned char *)s2;
-	i = 0;
-	while (s2[i])
-	{
-		if (p1[i] != p2[i] || p1[i] == 0 || p2[i] == 0)
-		{
-			return (p1[i] - p2[i]);
-		}
-		i++;
-	}
-	return (0);
+    int i;
+    i = 0;
+     while (s1[i] && s2[i] && s1[i] == s2[i])
+         i++;
+    return(s1[i] - s2[i]);
 }
 int ft_strncmp(const char *s1, const char *s2, size_t n)
 {
@@ -329,15 +318,18 @@ void ft_env(t_data *data, t_env *evnp)
 {
 	if (data->cmd[1] == NULL)
 	{
-		while (evnp->next)
+		while (evnp)
 		{
-			printf("%s", evnp->var);
-			printf("%s\n", evnp->value);
+			if (ft_strchr(evnp->var,'=') && evnp->egnor != 1)
+			{
+				printf("%s", evnp->var);
+				printf("%s\n", evnp->value);
+			}
 			evnp = evnp->next;
 		}
 	}
 }
-int check_buildin(t_data *data, t_env *envp)
+int check_buildin(t_data *data, t_env **envp)
 {
 	if (ft_strcmp(data->cmd[0], "echo") == 0)
 	{
@@ -346,7 +338,7 @@ int check_buildin(t_data *data, t_env *envp)
 	}
 	if (ft_strcmp(data->cmd[0], "cd") == 0)
 	{
-		ft_cd(data, envp);
+		ft_cd(data, *envp);
 		return (1);
 	}
 	if (ft_strcmp(data->cmd[0], "pwd") == 0)
@@ -356,12 +348,12 @@ int check_buildin(t_data *data, t_env *envp)
 	}
 	if (ft_strcmp(data->cmd[0], "export") == 0)
 	{
-		// ft_export(data, envp);
+		ft_export(data,envp);
 		return (1);
 	}
 	if (ft_strcmp(data->cmd[0], "env") == 0)
 	{
-		ft_env(data, envp);
+		ft_env(data, *envp);
 		return (1);
 	}
 	if (ft_strcmp(data->cmd[0], "exit") == 0)
@@ -371,14 +363,14 @@ int check_buildin(t_data *data, t_env *envp)
 	}
 	return (0);
 }
-void simple_cmd(t_data *data, char **env, t_env *envp)
+void simple_cmd(t_data *data, char **env, t_env **envp)
 {
 	int id;
 	t_var_us var;
 
 	if (check_buildin(data, envp))
 		return;
-	var.pth = getenv("PATH");
+	var.pth = ft_getenv(*envp,"PATH");
 	id = fork();
 	if (id < 0)
 		return;
@@ -388,7 +380,7 @@ void simple_cmd(t_data *data, char **env, t_env *envp)
 		waitpid(id, 0, 0);
 }
 
-void ft_execution(t_data *data, char **env, t_env *envp)
+void ft_execution(t_data *data, char **env, t_env **envp)
 {
 	int cont;
 
