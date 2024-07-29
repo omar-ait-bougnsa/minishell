@@ -106,4 +106,5 @@ void	*ft_memcpy(void *dest, const void *src, size_t size);
 void	ft_lstadd_backenv(t_env **env, t_env *new);
 void ft_export (t_data *data,t_env **env);
 int ft_strcmp(char *s1,char *s2);
+int ft_strncmp(const char *s1, const char *s2, size_t n);
 #endif

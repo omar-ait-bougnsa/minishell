@@ -40,17 +40,29 @@ char *ft_getvar (char *str)
     newstr[i] = '\0';
     return (newstr);
 }
-// int  check_var (char *var,char *str,t_env *envp)
-// {
-//     while (envp)
-//     {
-//         if (!ft_strcmp(envp->var,var) && str)
-//         {
-            
-//         }
+int  check_var (char *var,char *str,t_env *envp)
+{
+    int n;
 
-//     }
-// }
+    n = ft_strlen(var);
+
+    while (envp)
+    {
+        if (!ft_strncmp(envp->var,var,n))
+        {
+        if (ft_strchr (var,'='))
+        {
+            if (envp->value)
+                free(envp->value);
+            envp->value = str;
+            envp->egnor =0;
+        }
+            return(1);
+        }
+        envp = envp->next;
+    }
+    return (0);
+}
 void ft_setenv(char **env,t_env **envp)
 {
     char *str;
@@ -65,13 +77,16 @@ void ft_setenv(char **env,t_env **envp)
         str = ft_strsrch (env[i],'=');
         if (str)
             str = ft_strdup(&str[1]);
-      // check_var(var,str,*envp);
+       if (check_var(var,str,*envp));
+       else
+       {
         newenv = ft_calloc (sizeof(t_env),1);
         if (!newenv)
             return;
         newenv->value = str;
         newenv->var = var;
         ft_lstadd_backenv(envp,newenv);
+       }
         i++;
     }
 }
