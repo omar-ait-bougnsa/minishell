@@ -361,6 +361,11 @@ int check_buildin(t_data *data, t_env **envp)
 		ft_exit(data);
 		return (1);
 	}
+	if (ft_strcmp (data->cmd[0],"unset") == 0)
+	{
+		ft_unset(data,envp);
+		return (1);
+	}
 	return (0);
 }
 void simple_cmd(t_data *data, char **env, t_env **envp)

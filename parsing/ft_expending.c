@@ -109,6 +109,8 @@ char	*remove_qout(char *str)
 		}
 	}
 	free(str);
+	if (newstr == NULL)
+		newstr = apend_char_str(newstr,'\0');
 	return (newstr);
 }
 

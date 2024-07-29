@@ -50,7 +50,6 @@ void  sort_print1(t_env *env)
         n--;
     }
 }
-
 void ft_export (t_data *data,t_env **env)
 {
     if (data->cmd[1] == NULL)
@@ -58,5 +57,5 @@ void ft_export (t_data *data,t_env **env)
         sort_print1(*env);
     }
     else
-        ft_setenv (&data->cmd[1],env);
+        ft_setenv (data->cmd[1],env);
 }

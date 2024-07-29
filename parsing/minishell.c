@@ -79,8 +79,11 @@ void handle_signal(int sig)
 void set_env(char **env,t_env **envp)
 {
 	t_env *newenv;
+	int i;
+
+	i = 1;
 	if (*env == NULL)
-	{printf ("yes it is workin\n");
+	{
 		newenv = ft_calloc (sizeof(t_env),1);
 		if (newenv == NULL)
 			return;
@@ -90,7 +93,10 @@ void set_env(char **env,t_env **envp)
 		*envp = newenv;
 	}
 	else
-		ft_setenv(env,envp);
+	{
+		while (env[++i])
+			ft_setenv(env[i],envp);
+	}
 }
 
 int	main(int ac, char **av, char **env)

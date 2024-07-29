@@ -63,18 +63,14 @@ int  check_var (char *var,char *str,t_env *envp)
     }
     return (0);
 }
-void ft_setenv(char **env,t_env **envp)
+void ft_setenv(char *env,t_env **envp)
 {
     char *str;
     char *var;
     t_env *newenv;
-    int i;
-
-    i = 0;
-    while (env[i])
-    {
-        var = ft_getvar(env[i]);
-        str = ft_strsrch (env[i],'=');
+   
+        var = ft_getvar(env);
+        str = ft_strsrch (env,'=');
         if (str)
             str = ft_strdup(&str[1]);
        if (check_var(var,str,*envp));
@@ -87,6 +83,4 @@ void ft_setenv(char **env,t_env **envp)
         newenv->var = var;
         ft_lstadd_backenv(envp,newenv);
        }
-        i++;
-    }
 }
