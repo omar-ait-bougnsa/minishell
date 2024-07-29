@@ -83,7 +83,6 @@ int	main(int ac, char **av, char **env)
 	t_lexer	*lexer;
 	char	*len;
 	t_env *envp;
-	t_export *export;
 	(void)ac;
 	(void)av;
 	//signal(SIGINT,handle_signal);
@@ -101,7 +100,7 @@ int	main(int ac, char **av, char **env)
 			lexer = NULL;
 			lexer_phase(len, &lexer,envp);
 			data = ft_parsing(lexer, env);
-			 ft_execution(data, env,envp,export);
+			 ft_execution(data, env,envp);
 			    // while (data)
 			    // {
 			    //      printf("------------------------------------\n");

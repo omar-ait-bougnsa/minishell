@@ -356,7 +356,7 @@ int check_buildin(t_data *data, t_env *envp)
 	}
 	if (ft_strcmp(data->cmd[0], "export") == 0)
 	{
-		ft_export(data, envp);
+		// ft_export(data, envp);
 		return (1);
 	}
 	if (ft_strcmp(data->cmd[0], "env") == 0)
@@ -366,31 +366,7 @@ int check_buildin(t_data *data, t_env *envp)
 	}
 	if (ft_strcmp(data->cmd[0], "exit") == 0)
 	{
-		ft_exit(data);void *cover_sting(t_env *arr, int n)
-{
-	char **out;
-	int i = 0;
-
-	out = (char **)malloc(sizeof(char *) * (n + 1));
-	if (!out)
-		return NULL;
-
-	while (arr && i < n)
-	{
-		if (!out[i])
-		{
-			while (i > 0)
-				free(out[--i]);
-			free(out);
-			return NULL;
-		}
-		out[i] = ft_strjoinn(arr->var, arr->value);
-		arr = arr->next;
-		i++;
-	}
-	out[i] = NULL;
-	return (out);
-}
+		ft_exit(data);
 		return (1);
 	}
 	return (0);

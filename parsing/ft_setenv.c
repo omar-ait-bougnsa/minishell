@@ -16,22 +16,6 @@ void	ft_lstadd_backenv(t_env **env, t_env *new)
 	else
 		*env = new;
 }
-void	ft_lstadd_backexpo(t_export **env, t_export *new)
-{
-	t_export	*tmp;
-
-	if (!env || !new)
-		return ;
-	if (*env)
-	{
-		tmp = *env;
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-	else
-		*env = new;
-}
 
 char *ft_getvar (char *str)
 {
