@@ -16,6 +16,22 @@ void	ft_lstadd_backenv(t_env **env, t_env *new)
 	else
 		*env = new;
 }
+void	ft_lstadd_backexpo(t_export **env, t_export *new)
+{
+	t_export	*tmp;
+
+	if (!env || !new)
+		return ;
+	if (*env)
+	{
+		tmp = *env;
+		while (tmp->next != NULL)
+			tmp = tmp->next;
+		tmp->next = new;
+	}
+	else
+		*env = new;
+}
 
 char *ft_getvar (char *str)
 {
@@ -48,6 +64,8 @@ void ft_setenv(char **env,t_env **envp)
     i = 0;
     while (env[i])
     {
+        if(ft_strsrch (env[i],'='))
+        {
         var = ft_getvar(env[i]);
         str = ft_strsrch (env[i],'=');
         str = ft_strdup(&str[1]);
@@ -58,6 +76,8 @@ void ft_setenv(char **env,t_env **envp)
         newenv->var = var;
         newenv->next = NULL;
         ft_lstadd_backenv(envp,newenv);
+        }
         i++;
-    }
+    
+}
 }

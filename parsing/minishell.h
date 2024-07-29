@@ -8,6 +8,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <fcntl.h>
+#include <limits.h>
 
 typedef struct t_file
 {
@@ -62,12 +63,7 @@ typedef struct s_env
     char *value;
     struct s_env *next;
 }t_env;
-typedef struct s_expo
-{
-    char *var;
-    char *value;
-    struct s_env *next;
-}t_export;
+
 typedef struct t_data
 {
     char **cmd;
@@ -81,7 +77,7 @@ char  **ft_split (char *str,char c);
 t_data *ft_parsing (t_lexer *lexer, char **env);
 int ft_strlen (char *str);
 int syntax_error(t_lexer **lexer);
-void ft_execution(t_data *data,char **env,t_env *envp);
+void ft_execution(t_data *data,char **env,t_env *envp,t_export *export);
 char *ft_strsrch(char *str,char c);
 char	*ft_expending(t_lexer *lexer, char *str, t_token *token,t_env *envp);
 char *apend_char_str (char *str,char c);
@@ -100,10 +96,13 @@ char	*ft_strdup(char *str);
 
 //exicutiom ------------------
 void	check_file(t_data *data, t_var_us *var);
+int ft_strchr(const char *s, int c);
+t_export *copy_envp(t_env *envp);
 char	*check_path(t_var_us var, char **cmd);
 void execut_comand(t_data *data,char **env);
 void ft_setenv(char **env,t_env **envp);
 char *ft_getenv (t_env *env,char *str);
 void	*ft_memcpy(void *dest, const void *src, size_t size);
 void	ft_lstadd_backenv(t_env **env, t_env *new);
+void	ft_lstadd_backexpo(t_export **env, t_export *new);
 #endif

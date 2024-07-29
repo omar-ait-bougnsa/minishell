@@ -166,7 +166,7 @@ void ft_cd(t_data *data, t_env *env)
 	}
 	if (chdir(data->cmd[1]) != 0)
 	{
-		write(2, "bash: cd: ", 10);
+		write(2, "ba1sh: cd: ", 10);
 		perror(data->cmd[1]);
 	}
 	else
@@ -232,31 +232,6 @@ void ft_pwd(t_data *data)
 	printf("%s\n", path);
 	free(path);
 }
-void *cover_sting(t_env *arr, int n)
-{
-	char **out;
-	int i = 0;
-
-	out = (char **)malloc(sizeof(char *) * (n + 1));
-	if (!out)
-		return NULL;
-
-	while (arr && i < n)
-	{
-		if (!out[i])
-		{
-			while (i > 0)
-				free(out[--i]);
-			free(out);
-			return NULL;
-		}
-		out[i] = ft_strjoinn(arr->var, arr->value);
-		arr = arr->next;
-		i++;
-	}
-	out[i] = NULL;
-	return (out);
-}
 void free_env(t_env *env)
 {
 	t_env *temp;
@@ -269,62 +244,6 @@ void free_env(t_env *env)
 	}
 }
 
-int count_envp(t_env *envp)
-{
-	int n = 0;
-	while (envp != NULL)
-	{
-		n++;
-		envp = envp->next;
-	}
-	return (n);
-}
-t_env *copy_envp(t_env *envp)
-{
-	if (!envp)
-		return NULL;
-
-	t_env *new_envp = malloc(sizeof(t_env));
-	if (!new_envp)
-		return NULL;
-
-	new_envp->var = ft_strdup(envp->var);
-	new_envp->value = ft_strdup(envp->value);
-	new_envp->next = copy_envp(envp->next);
-
-	return (new_envp);
-}
-void ft_swap(char **a, char **b)
-{
-	char *temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
-char **sort_av(char **av)
-{
-	int count = 0;
-	int i;
-	int j;
-	while (av[count] != NULL)
-		count++;
-	i = 0;
-	while (i < count - 1)
-	{
-		j = 0;
-
-		while (j < count - i - 1)
-		{
-			if (ft_strcmp(av[j], av[j + 1]) > 0)
-			{
-				ft_swap(&av[j], &av[j + 1]);
-			}
-			j++;
-		}
-		i++;
-	}
-	return av;
-}
 void free_envp(t_env *envp)
 {
 	t_env *tmp;
@@ -338,6 +257,7 @@ void free_envp(t_env *envp)
 		free(tmp);
 	}
 }
+
 int ft_strchr(const char *s, int c)
 {
 	int i;
@@ -351,48 +271,59 @@ int ft_strchr(const char *s, int c)
 	}
 	return (0);
 }
-void ft_export(t_data *data, t_env *envp)
+
+int	ft_atoi(const char *str)
+{
+    long long res;
+    int sign;
+    int i;
+
+    i = 0;
+    res = 0;
+    sign = 1;
+    while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+        i++;
+    if (str[i] == '-')
+        sign *= -1;
+    if (str[i] == '-' || str[i] == '+')
+        i++;
+    while (str[i])
+    {
+        if (str[i] >= '0' && str[i] <= '9')
+        {
+            if (res > (LLONG_MAX - (str[i] - '0')) / 10)
+            {
+                printf("exit\n");
+                printf("bash: exit: %s: numeric argument required\n", str);
+                exit(1);
+            }
+            res = res * 10 + str[i] - '0';
+        }
+        else
+        {
+            printf("exit\n");
+            printf("bash: exit: %s: numeric argument required\n", str);
+            exit(1);
+        }
+        i++;
+    }
+    return (res * sign);
+}
+void ft_exit(t_data *data)
 {
 	int n;
-	int i = 0;
-	t_env *export;
-	char **av;
-	t_env *new_ex;
+	if(data->cmd[1]==NULL)
+	{
+		printf("exit\n");
+		exit(0);
+	}
+	else 
+		{
+			n=ft_atoi(data->cmd[1]);
+			printf("exit\n");
+			exit(n);
+		}
 
-	if (data->cmd[1] == NULL)
-	{
-		while (av[i])
-		{
-			printf("export %s\n", av[i]);
-			i++;
-		}
-		free(av);
-		// free_envp(export);
-	}
-	int y = 0;
-	if (y == 0)
-		export = copy_envp(envp);
-	n = count_envp(export);
-	av = cover_sting(export, n);
-	av = sort_av(av);
-	else
-	{
-		if (ft_strchr(data->cmd[1], '=') == 0)
-		{
-			printf("dd=========\n");
-			new_ex = malloc(sizeof(t_env));
-			new_ex->var = strdup(data->cmd[1]);
-			printf("my data is %s\n\n", new_ex->var);
-			new_ex->next = NULL;
-			ft_lstadd_backenv(&export, new_ex);
-			y = 1;
-			while (export->next)
-			{
-				// printf("%s\n", export->var);
-				export = export->next;
-			}
-		}
-	}
 }
 void ft_env(t_data *data, t_env *evnp)
 {
@@ -431,6 +362,35 @@ int check_buildin(t_data *data, t_env *envp)
 	if (ft_strcmp(data->cmd[0], "env") == 0)
 	{
 		ft_env(data, envp);
+		return (1);
+	}
+	if (ft_strcmp(data->cmd[0], "exit") == 0)
+	{
+		ft_exit(data);void *cover_sting(t_env *arr, int n)
+{
+	char **out;
+	int i = 0;
+
+	out = (char **)malloc(sizeof(char *) * (n + 1));
+	if (!out)
+		return NULL;
+
+	while (arr && i < n)
+	{
+		if (!out[i])
+		{
+			while (i > 0)
+				free(out[--i]);
+			free(out);
+			return NULL;
+		}
+		out[i] = ft_strjoinn(arr->var, arr->value);
+		arr = arr->next;
+		i++;
+	}
+	out[i] = NULL;
+	return (out);
+}
 		return (1);
 	}
 	return (0);
