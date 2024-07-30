@@ -13,7 +13,7 @@ int count_listenv(t_env *env)
     return (i);
 }
 
-void  sort_print1(t_env *env)
+void  sort_print(t_env *env)
 {
     int n;
     t_env *tmp;
@@ -54,7 +54,7 @@ void ft_export (t_data *data,t_env **env)
 {
     if (data->cmd[1] == NULL)
     {
-        sort_print1(*env);
+        sort_print(*env);
     }
     else
         ft_setenv (data->cmd[1],env);

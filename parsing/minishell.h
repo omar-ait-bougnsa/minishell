@@ -56,6 +56,7 @@ typedef struct t_var_us
     int outfd;
     int **fd1;
     int *id;
+    int i;
 } t_var_us;
 typedef struct s_env
 {
@@ -99,7 +100,7 @@ void ft_execution(t_data *data,char **env,t_env **envp);
 void	check_file(t_data *data, t_var_us *var);
 int ft_strchr(const char *s, int c);
 char	*check_path(t_var_us var, char **cmd);
-void execut_comand(t_data *data,char **env);
+void execut_comand(t_data *data,char **env,t_env **envp);
 void ft_setenv(char *env,t_env **envp);
 char *ft_getenv (t_env *env,char *str);
 void	*ft_memcpy(void *dest, const void *src, size_t size);
@@ -108,4 +109,5 @@ void ft_export (t_data *data,t_env **env);
 int ft_strcmp(char *s1,char *s2);
 int ft_strncmp(const char *s1, const char *s2, size_t n);
 void ft_unset(t_data *data,t_env **envp);
+int check_buildin(t_data *data, t_env **envp);
 #endif

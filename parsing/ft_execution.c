@@ -395,6 +395,6 @@ void ft_execution(t_data *data, char **env, t_env **envp)
 		if (cont == 1)
 			simple_cmd(data, env, envp);
 		else
-			execut_comand(data, env);
+			execut_comand(data, env,envp);
 	}
 }
