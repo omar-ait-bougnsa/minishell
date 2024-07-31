@@ -117,7 +117,7 @@ void change_env(t_data *data, t_env *env)
 }
 void ft_cd(t_data *data, t_env *env)
 {
-	char *home = getenv("HOME");
+	char *home = ft_getenv(env,"HOME");
 	char *tmp = getcwd(NULL, 0);
 
 	if (tmp == NULL)
@@ -141,7 +141,7 @@ void ft_cd(t_data *data, t_env *env)
 
 				perror(home);
 			}
-		}
+		}p
 		else
 			write(2, "bash: cd: HOME not set\n", 23);
 		free(tmp);
@@ -168,40 +168,45 @@ void ft_cd(t_data *data, t_env *env)
 }
 int check_newline_flag(t_data *data, int *i)
 {
-	int j;
+    int j;
+    int found_flag = 0;
 
-	while (data->cmd[*i] && data->cmd[*i][0] == '-' && data->cmd[*i][1] == 'n')
-	{
-		j = 1;
-		while (data->cmd[*i][j] == 'n')
-			j++;
-		if (data->cmd[*i][j] == '\0')
-		{
-			(*i)++;
-			return (0);
-		}
-		else
-			break;
-	}
-	return (1);
+    while (data->cmd[*i] && data->cmd[*i][0] == '-' && data->cmd[*i][1] == 'n')
+    {
+        j = 1;
+        while (data->cmd[*i][j] == 'n')
+            j++;
+        if (data->cmd[*i][j] == '\0')
+        {
+            found_flag = 1;
+            (*i)++;
+        }
+        else
+            break;
+    }
+    if (found_flag)
+        return (0);
+    else
+        return (1);
+
 }
 
 void ft_echo(t_data *data)
 {
-	int i;
-	int newline;
+    int i;
+    int newline;
 
-	i = 1;
-	newline = check_newline_flag(data, &i);
-	while (data->cmd[i])
-	{
-		printf("%s", data->cmd[i]);
-		if (data->cmd[i + 1])
-			printf(" ");
-		i++;
-	}
-	if (newline)
-		printf("\n");
+    i = 1;
+    newline = check_newline_flag(data, &i);
+    while (data->cmd[i])
+    {
+        printf("%s", data->cmd[i]);
+        if (data->cmd[i + 1])
+            printf(" ");
+        i++;
+    }
+    if (newline)
+        printf("\n");
 }
 
 void ft_pwd(t_data *data)
@@ -328,6 +333,7 @@ void ft_env(t_data *data, t_env *evnp)
 			evnp = evnp->next;
 		}
 	}
+
 }
 int check_buildin(t_data *data, t_env **envp)
 {
@@ -373,6 +379,7 @@ void simple_cmd(t_data *data, char **env, t_env **envp)
 	int id;
 	t_var_us var;
 
+
 	if (check_buildin(data, envp))
 		return;
 	var.pth = ft_getenv(*envp,"PATH");
@@ -388,6 +395,7 @@ void simple_cmd(t_data *data, char **env, t_env **envp)
 void ft_execution(t_data *data, char **env, t_env **envp)
 {
 	int cont;
+
 
 	if (data)
 	{

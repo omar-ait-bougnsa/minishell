@@ -12,7 +12,7 @@ void ft_unset(t_data *data,t_env **envp)
         tmp = *envp;
         while (new)
         {
-            if (!strncmp(data->cmd[i],new->var,ft_strlen(data->cmd[i])))
+            if (!ft_strncmp(data->cmd[i],new->var,ft_strlen(data->cmd[i])))
             {
                 free(new->var);
                 if(new->value)

@@ -109,5 +109,10 @@ void ft_export (t_data *data,t_env **env);
 int ft_strcmp(char *s1,char *s2);
 int ft_strncmp(const char *s1, const char *s2, size_t n);
 void ft_unset(t_data *data,t_env **envp);
+<<<<<<< HEAD
 int check_buildin(t_data *data, t_env **envp);
+=======
+int	ft_isalpha(int c);
+int	ft_isalnumm(int c);
+>>>>>>> af190a4 (a)
 #endif
