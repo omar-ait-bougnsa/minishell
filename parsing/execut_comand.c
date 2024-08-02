@@ -1,34 +1,12 @@
 #include "minishell.h"
 
-int check_cmd_build(t_data *data,t_env **envp,t_var_us var)
-{
-    int flag;
-    
-    flag = 0;
-    if (!ft_strcmp (data->cmd[0],"pwd") ||!ft_strcmp (data->cmd[0],"cd"))
-        flag = 1;
-    else if (!ft_strcmp (data->cmd[0],"echo") ||!ft_strcmp (data->cmd[0],"export"))
-        flag = 1;
-    else if (!ft_strcmp (data->cmd[0],"env") ||!ft_strcmp (data->cmd[0],"unset"))
-        flag = 1;
-   if (flag == 1)
-   {
-        dup2(var.fd1[var.i][1],1);
-        check_buildin(data, envp);
-        close (var.fd1[var.i][0]);
-        close (var.fd1[var.i][1]);
-        return (1);
-   }
-   return (0);
-}
-
 void first_child (t_data *data, t_var_us var,char **env,t_env **envp)
 {
+    check_file(data,&var);
     if (check_cmd_build(data,envp,var))
         exit(0);
-    var.pth = getenv("PATH");
+    var.pth = ft_getenv(*envp,"PATH");
     var.path = ft_split(var.pth,':');
-    check_file(data,&var);
     var.pth = check_path (var,data->cmd);
     if (var.infd != -2)
         {
@@ -49,11 +27,11 @@ void first_child (t_data *data, t_var_us var,char **env,t_env **envp)
 
 void secund_command(t_data *data,t_var_us var,char **env,t_env **envp)
 {
+    check_file(data,&var);
      if (check_cmd_build(data,envp,var))
         exit (0);
-     var.pth = getenv("PATH");
+     var.pth = ft_getenv(*envp,"PATH");
     var.path = ft_split(var.pth,':');
-    check_file(data,&var);
     var.pth = check_path (var,data->cmd);
     if (var.infd != -2)
     {
@@ -76,11 +54,11 @@ void secund_command(t_data *data,t_var_us var,char **env,t_env **envp)
 }
 void last_command (t_data *data,t_var_us var,char **env,t_env **envp)
 {
-    if (check_buildin(data, envp))
-        exit(0);
-    var.pth = getenv("PATH");
-    var.path = ft_split(var.pth,':');
     check_file (data,&var);
+    if (check_singcmd_build(data, envp,var))
+        exit(0);
+    var.pth = ft_getenv(*envp,"PATH");
+    var.path = ft_split(var.pth,':');
     var.pth = check_path (var,data->cmd);
     if (var.infd != -2)
     {
@@ -95,10 +73,9 @@ void last_command (t_data *data,t_var_us var,char **env,t_env **envp)
         close(var.outfd);
     }
     close (var.fd1[var.i -1][0]);
-    close (var.fd1[var.i][0]);
-    close (var.fd1[var.i][1]);
     execve(var.pth,data->cmd,env);
 }
+
 void execut_comand(t_data *data,char **env,t_env **envp)
 {
     int cont;

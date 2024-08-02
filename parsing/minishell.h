@@ -109,10 +109,13 @@ void ft_export (t_data *data,t_env **env);
 int ft_strcmp(char *s1,char *s2);
 int ft_strncmp(const char *s1, const char *s2, size_t n);
 void ft_unset(t_data *data,t_env **envp);
-<<<<<<< HEAD
 int check_buildin(t_data *data, t_env **envp);
-=======
+int check_singcmd_build(t_data *data,t_env **envp,t_var_us var);
+int check_cmd_build(t_data *data,t_env **envp,t_var_us var);
+void ft_free1(char **str);
+void free_exit(t_data *data,t_env *env);
+void free_data (t_data *data);
+char *ft_getvar (char *str);
+char *ft_strjoinn(char *s1, char *ss2);
 int	ft_isalpha(int c);
-int	ft_isalnumm(int c);
->>>>>>> af190a4 (a)
 #endif

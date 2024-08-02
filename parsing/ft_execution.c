@@ -7,9 +7,20 @@ void check_file(t_data *data, t_var_us *var)
 	while (data->file)
 	{
 		if (data->file->infile == 1)
+		{
+			close (var->infd);
 			var->infd = open(data->file->file, O_RDONLY);
+		}
 		else if (data->file->outfile == 1)
-			var->outfd = open(data->file->file, O_RDWR);
+		{
+			close (var->outfd);
+			var->outfd = open(data->file->file, O_RDWR | O_CREAT | O_TRUNC ,0664);
+		}
+		else if (data->file->apend == 1)
+		{
+			close (var->outfd);
+			var->outfd = open(data->file->file, O_RDWR | O_CREAT,0664);
+		}
 		if (var->infd == -1 || var->outfd == -1)
 		{
 			perror(data->file->file);
@@ -34,10 +45,9 @@ int count_list(t_data *data)
 
 void simple_execut(t_data *data, t_var_us var, char **env)
 {
+	check_file(data, &var);
 	var.path = ft_split(var.pth, ':');
 	var.pth = check_path(var, data->cmd);
-	if (var.pth)
-		check_file(data, &var);
 	if (var.infd != -2)
 	{
 		dup2(var.infd, 0);
@@ -141,7 +151,7 @@ void ft_cd(t_data *data, t_env *env)
 
 				perror(home);
 			}
-		}p
+		}
 		else
 			write(2, "bash: cd: HOME not set\n", 23);
 		free(tmp);
@@ -168,45 +178,40 @@ void ft_cd(t_data *data, t_env *env)
 }
 int check_newline_flag(t_data *data, int *i)
 {
-    int j;
-    int found_flag = 0;
+	int j;
 
-    while (data->cmd[*i] && data->cmd[*i][0] == '-' && data->cmd[*i][1] == 'n')
-    {
-        j = 1;
-        while (data->cmd[*i][j] == 'n')
-            j++;
-        if (data->cmd[*i][j] == '\0')
-        {
-            found_flag = 1;
-            (*i)++;
-        }
-        else
-            break;
-    }
-    if (found_flag)
-        return (0);
-    else
-        return (1);
-
+	while (data->cmd[*i] && data->cmd[*i][0] == '-' && data->cmd[*i][1] == 'n')
+	{
+		j = 1;
+		while (data->cmd[*i][j] == 'n')
+			j++;
+		if (data->cmd[*i][j] == '\0')
+		{
+			(*i)++;
+			return (0);
+		}
+		else
+			break;
+	}
+	return (1);
 }
 
 void ft_echo(t_data *data)
 {
-    int i;
-    int newline;
+	int i;
+	int newline;
 
-    i = 1;
-    newline = check_newline_flag(data, &i);
-    while (data->cmd[i])
-    {
-        printf("%s", data->cmd[i]);
-        if (data->cmd[i + 1])
-            printf(" ");
-        i++;
-    }
-    if (newline)
-        printf("\n");
+	i = 1;
+	newline = check_newline_flag(data, &i);
+	while (data->cmd[i])
+	{
+		printf("%s", data->cmd[i]);
+		if (data->cmd[i + 1])
+			printf(" ");
+		i++;
+	}
+	if (newline)
+		printf("\n");
 }
 
 void ft_pwd(t_data *data)
@@ -238,19 +243,6 @@ void free_env(t_env *env)
 	}
 }
 
-void free_envp(t_env *envp)
-{
-	t_env *tmp;
-
-	while (envp)
-	{
-		tmp = envp;
-		envp = envp->next;
-		free(tmp->var);
-		free(tmp->value);
-		free(tmp);
-	}
-}
 
 int ft_strchr(const char *s, int c)
 {
@@ -333,7 +325,6 @@ void ft_env(t_data *data, t_env *evnp)
 			evnp = evnp->next;
 		}
 	}
-
 }
 int check_buildin(t_data *data, t_env **envp)
 {
@@ -378,10 +369,12 @@ void simple_cmd(t_data *data, char **env, t_env **envp)
 {
 	int id;
 	t_var_us var;
-
-
-	if (check_buildin(data, envp))
+	var.outfd = 0;
+	if (check_singcmd_build(data, envp,var))
+	{
+		//free_exit(data,*envp);
 		return;
+	}
 	var.pth = ft_getenv(*envp,"PATH");
 	id = fork();
 	if (id < 0)
@@ -395,7 +388,6 @@ void simple_cmd(t_data *data, char **env, t_env **envp)
 void ft_execution(t_data *data, char **env, t_env **envp)
 {
 	int cont;
-
 
 	if (data)
 	{

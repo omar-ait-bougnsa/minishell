@@ -43,16 +43,7 @@ void	ft_free_exit(char *str, t_var_us var, int n, char **cmd)
 		free(cmd);
 	exit(n);
 }
-void ft_free1(char **str)
-{
-	int i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		i++;
-	}
-	free (str);
-}
+
 int	ft_check_access(t_var_us *var, char **cmd)
 {
 	if (access(cmd[0], F_OK) != -1)

@@ -123,38 +123,38 @@ int	main(int ac, char **av, char **env)
 			lexer = NULL;
 			lexer_phase(len, &lexer,envp);
 			data = ft_parsing(lexer, env);
-			 ft_execution(data, env,&envp);
-			    // while (data)
-			    // {
-			    //      printf("------------------------------------\n");
-			    //      printf ("command is %s\n",data->cmd[0]);
-			    //      int i = 1;
-			    //      while (data->cmd && data->cmd[i])
-			    //      {
-			    //         printf("args = %s\n",data->cmd[i]);
-			    //         i++;
-			    //      }
-			    //     if (data->file)
-			    //     {
-			    //         while (data->file)
-			    //         {
-			    //             if (data->file->infile == 1)
-			    //                 printf("infile is  %s\n",data->file->file);
-			    //             else if (data->file->herdoc == 1)
-			    //                 printf("herdoc is %s\n",data->file->file);
-			    //             else if (data->file->apend == 1)
-			    //                 printf("apend is %s\n",data->file->file);
-			    //             else
-			    //                 printf("outfile is  %s\n",data->file->file);
-			    //             data->file = data->file->next;
-			    //         printf("------------------------------------\n");
-			    //         }
-			    //     }
-			    //     printf ("other pipe______________________________________|\n");
-			    //     data = data->next;
-			    // }
+			ft_execution(data, env,&envp);
+		// 	    while (data)
+		// 	    {
+		// 	         printf("------------------------------------\n");
+		// 	         printf ("command is %s\n",data->cmd[0]);
+		// 	         int i = 1;
+		// 	         while (data->cmd && data->cmd[i])
+		// 	         {
+		// 	            printf("args = %s\n",data->cmd[i]);
+		// 	            i++;
+		// 	         }
+		// 	        if (data->file)
+		// 	        {
+		// 	            while (data->file)
+		// 	            {
+		// 	                if (data->file->infile == 1)
+		// 	                    printf("infile is  %s\n",data->file->file);
+		// 	                else if (data->file->herdoc == 1)
+		// 	                    printf("herdoc is %s\n",data->file->file);
+		// 	                else if (data->file->apend == 1)
+		// 	                    printf("apend is %s\n",data->file->file);
+		// 	                else
+		// 	                    printf("outfile is  %s\n",data->file->file);
+		// 	                data->file = data->file->next;
+		// 	            printf("------------------------------------\n");
+		// 	            }
+		// 	        }
+		// 	        printf ("other pipe______________________________________|\n");
+		// 	        data = data->next;
+		// 	    }
 		}
-		//free (data);
+		free_data (data);
 		add_history(len);
 		free (len);
 	}

@@ -25,21 +25,26 @@ char *ft_getvar (char *str)
 
     i = 0;
     n = 0;
-    while (str[n] && str[n] != '=')
+    while (str[n] && str[n] != '=' && str[n] != '+')
         n++;
-    if (str[n] == '=')
+    if (str[n] == '=' || str[n] == '+')
         n++;
     newstr = malloc(n+1);
     if (newstr == NULL)
         return(NULL);
-    while (i < n)
+    n = 0;
+    while (str[i] && str[i] != '=')
     {
-        newstr[i] = str[i];
+        if (str[i] != '+')
+             newstr[n++] = str[i];
         i++;
     }
-    newstr[i] = '\0';
+    if (str[i] == '=')
+        newstr[n++] = '=';
+    newstr[n] = '\0';
     return (newstr);
 }
+
 int  check_var (char *var,char *str,t_env *envp)
 {
     int n;
@@ -62,7 +67,7 @@ int  check_var (char *var,char *str,t_env *envp)
         envp = envp->next;
     }
     return (0);
-}
+} 
 void ft_setenv(char *env,t_env **envp)
 {
     char *str;
