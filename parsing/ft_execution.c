@@ -165,7 +165,7 @@ void ft_cd(t_data *data, t_env *env)
 	}
 	if (chdir(data->cmd[1]) != 0)
 	{
-		write(2, "ba1sh: cdget_next_line: ", 10);
+		write(2, "ba1sh: cd: ", 10);
 		perror(data->cmd[1]);
 	}
 	else
@@ -178,44 +178,40 @@ void ft_cd(t_data *data, t_env *env)
 }
 int check_newline_flag(t_data *data, int *i)
 {
-    int j;
-    int found_flag = 0;
+	int j;
 
-    while (data->cmd[*i] && data->cmd[*i][0] == '-' && data->cmd[*i][1] == 'n')
-    {
-        j = 1;
-        while (data->cmd[*i][j] == 'n')
-            j++;
-        if (data->cmd[*i][j] == '\0')
-        {
-            found_flag = 1;
-            (*i)++;
-        }
-        else
-            break;
-    }
-    if (found_flag)
-        return (0);
-    else
-        return (1);
+	while (data->cmd[*i] && data->cmd[*i][0] == '-' && data->cmd[*i][1] == 'n')
+	{
+		j = 1;
+		while (data->cmd[*i][j] == 'n')
+			j++;
+		if (data->cmd[*i][j] == '\0')
+		{
+			(*i)++;
+			return (0);
+		}
+		else
+			break;
+	}
+	return (1);
 }
 
 void ft_echo(t_data *data)
 {
-    int i;
-    int newline;
+	int i;
+	int newline;
 
-    i = 1;
-    newline = check_newline_flag(data, &i);
-    while (data->cmd[i])
-    {
-        printf("%s", data->cmd[i]);
-        if (data->cmd[i + 1])
-            printf(" ");
-        i++;
-    }
-    if (newline)
-        printf("\n");
+	i = 1;
+	newline = check_newline_flag(data, &i);
+	while (data->cmd[i])
+	{
+		printf("%s", data->cmd[i]);
+		if (data->cmd[i + 1])
+			printf(" ");
+		i++;
+	}
+	if (newline)
+		printf("\n");
 }
 
 void ft_pwd(t_data *data)
@@ -234,6 +230,17 @@ void ft_pwd(t_data *data)
 	}
 	printf("%s\n", path);
 	free(path);
+}
+void free_env(t_env *env)
+{
+	t_env *temp;
+
+	while (env != NULL)
+	{
+		temp = env->next;
+		free(env);
+		env = temp;
+	}
 }
 
 
@@ -358,49 +365,31 @@ int check_buildin(t_data *data, t_env **envp)
 	}
 	return (0);
 }
-void simple_cmd(t_data *data, char **env, t_env **envp)
-{
-	int id;
-	t_var_us var;
-	var.outfd = 0;
-	if (check_singcmd_build(data, envp,var))
-	{
-		//free_exit(data,*envp);
-		return;
-	}
-	var.pth = ft_getenv(*envp,"PATH");
-	id = fork();
-	if (id < 0)
-		return;
-	if (id == 0)
-		simple_execut(data, var, env);
-	else
-		waitpid(id, 0, 0);
-}
 void ft_herdoc(t_data *data)
 {
-            char *line = NULL;
-            int fd;
+    char *line = NULL;
+    int fd;
+	t_file *newfile;
 
     while (data)
     {
-        while  (data->file)
+		newfile = data->file;
+        while  (newfile)
         {
-			if(data->file->herdoc==1)
+			if(newfile->herdoc == 1)
 			{
 
             fd = open("/tmp/heredoc_tma", O_CREAT | O_WRONLY | O_TRUNC, 0644);
             if (fd == -1)
             {
-					printf("ssss\n");
                 perror("open");
                 return;
             }
             while ((line = readline(">")) != NULL)
             {
-				if (ft_strcmp(line, data->file->file) == 0)
+				if (ft_strcmp(line, newfile->file) == 0)
                 {
-					printf ("%s\n",data->file->file);
+					printf ("%s\n",newfile->file);
                     free(line);
                     break;
                 }
@@ -415,17 +404,36 @@ void ft_herdoc(t_data *data)
             }
             close(fd);
 			}
-			data->file=data->file->next;
+			newfile = newfile->next;
         }
         data = data->next;
     }
 }
 
+void simple_cmd(t_data *data, char **env, t_env **envp)
+{
+	int id;
+	t_var_us var;
+	var.outfd = 0;
+	ft_herdoc(data);
+	if (check_singcmd_build(data, envp,var))
+	{
+		//free_exit(data,*envp);
+		return;
+	}
+	var.pth = ft_getenv(*envp,"PATH");
+	id = fork();
+	if (id < 0)
+		return;
+	if (id == 0)
+		simple_execut(data, var, env);
+	else
+		waitpid(id, 0, 0);
+}
+
 void ft_execution(t_data *data, char **env, t_env **envp)
 {
 	int cont;
-
-	ft_herdoc(data);
 
 	if (data)
 	{
