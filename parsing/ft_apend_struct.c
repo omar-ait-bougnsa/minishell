@@ -26,8 +26,8 @@ void	apend_in_struct(t_lexer **lexer, char *str, t_token token,t_env *envp)
 	int		len;
 
 	len = ft_strlen(str);
-	if (ft_strchr(str,'$'))
-		str = ft_expending(*lexer, str, &token,envp);
+	//if (ft_strchr(str,'$'))
+	str = ft_expending(*lexer, str, &token,envp);
 	new_lexer = *lexer;
 	if (token == inredire && len == 2)
 		token = herduc;

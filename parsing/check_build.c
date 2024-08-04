@@ -30,7 +30,10 @@ int check_singcmd_build(t_data *data,t_env **envp,t_var_us var)
     int flag;
     int fd;
 
+
     flag = 0;
+    if (data->cmd == NULL)
+        return (0);
     if (!ft_strcmp (data->cmd[0],"pwd") ||!ft_strcmp (data->cmd[0],"cd"))
         flag = 1;
     else if (!ft_strcmp (data->cmd[0],"echo") ||!ft_strcmp (data->cmd[0],"export"))

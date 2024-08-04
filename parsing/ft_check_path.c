@@ -95,6 +95,8 @@ char	*check_path(t_var_us var, char **cmd)
 	int i;
 
 	i = 0;
+	if (cmd[0][0] == '\0')
+		return (NULL);
 	if (cmd[0] == NULL)
 		ft_free_exit("minshell: command not found\n", var, 127, cmd);
 	if (cmd[0][0] == '.' && cmd[0][1] == '\0')

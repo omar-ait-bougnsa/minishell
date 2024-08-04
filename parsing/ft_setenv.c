@@ -29,7 +29,7 @@ char *ft_getvar (char *str)
         n++;
     if (str[n] == '=' || str[n] == '+')
         n++;
-    newstr = malloc(n+1);
+    newstr = ft_calloc(sizeof(char),n+1);
     if (newstr == NULL)
         return(NULL);
     n = 0;
@@ -47,13 +47,9 @@ char *ft_getvar (char *str)
 
 int  check_var (char *var,char *str,t_env *envp)
 {
-    int n;
-
-    n = ft_strlen(var);
-
     while (envp)
     {
-        if (!ft_strncmp(envp->var,var,n))
+        if (!ft_strscmp(envp->var,var,'='))
         {
         if (ft_strchr (var,'='))
         {

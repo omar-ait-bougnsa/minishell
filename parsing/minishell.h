@@ -17,6 +17,7 @@ typedef struct t_file
     int outfile;
     int herdoc;
     int apend;
+    int fd[2];
     struct t_file *next;
 }t_file;
 
@@ -118,4 +119,8 @@ void free_data (t_data *data);
 char *ft_getvar (char *str);
 char *ft_strjoinn(char *s1, char *ss2);
 int	ft_isalpha(int c);
+int ft_strscmp (char *s1,char *s2,char c);
+char *ft_readline(char *str);
+void ft_herdoc(t_data *data);
+void ft_close (t_data *data);
 #endif

@@ -79,25 +79,34 @@ int ft_strscmp (char *s1,char *s2,char c)
 int set_to_env(char *env,t_env **envp)
 {
     t_env *new;
+    char *str;
+
     new = *envp;
+    str = ft_strsrch(env,'+');
+    if (str && str[1] != '=')
+    return (0);
     while (new)
     {
         if (!ft_strscmp(new->var,env,'+'))
         {
-           env = ft_strsrch (env,'=');
-            env = ft_strjoinn (new->value,&env[1]);
+           str = ft_strsrch (env,'=');
+            str = ft_strjoinn (new->value,&str[1]);
             free(new->value);
-            new->value = env;
+            new->value = str;
+            str = ft_strjoinn (new->var,"=");
+            free(new->var);
+            new->var = str;
             return (1);
         }
         new = new->next;
     }
+    ft_setenv (env,envp);
     return (0);
 }
 void ft_export (t_data *data,t_env **env)
 {
-    char *str;
     int i;
+    char *str;
     i = 1;
     if (data->cmd[1] == NULL)
         sort_print(*env);
@@ -105,15 +114,16 @@ void ft_export (t_data *data,t_env **env)
     {
         while (data->cmd[i])
         {
+
         str = ft_strsrch(data->cmd[i],'+');
-        if (str && str[1] == '=')
-             set_to_env(data->cmd[i],env);
+        if (ft_isalpha(data->cmd[i][0]) == 0)
+                printf("minishell: export:` %s': not a valid identifier\n", data->cmd[i]);
+        else if  (str && str[1] == '=')
+            set_to_env(data->cmd[i],env);
         else  if (data->cmd[i][0] == '-' && data->cmd[i][1] == '-')
                 printf("minishell: export: --: invalid option\n");
         else if (data->cmd[i][0] == '-')
                 printf("minishell: export: -%c: invalid option\n", data->cmd[i][1]);
-        else if (ft_isalpha(data->cmd[i][0]) == 0)
-                printf("minishell: export:` %s': not a valid identifier\n", data->cmd[i]);
         else if (ft_check_str(data->cmd[i]) == 0)
                 printf("minishell: export:` %s': not a valid identifier\n", data->cmd[i]);
         else

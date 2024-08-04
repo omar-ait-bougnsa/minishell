@@ -11,6 +11,11 @@ void check_file(t_data *data, t_var_us *var)
 			close (var->infd);
 			var->infd = open(data->file->file, O_RDONLY);
 		}
+		else if (data->file->herdoc == 1)
+		{
+			close (var->infd);
+			var->infd = data->file->fd[0];
+		}
 		else if (data->file->outfile == 1)
 		{
 			close (var->outfd);
@@ -93,7 +98,10 @@ char *ft_strjoinn(char *s1, char *ss2)
 	if (!s1 && !ss2)
 		return (NULL);
 	if (!s1)
-		return ((char *)ss2);
+	{
+		result = ft_strdup (ss2);
+		return (result);
+	}
 	if (!ss2)
 		return ((char *)s1);
 	i = ft_strlen(s1);
@@ -367,8 +375,9 @@ int check_buildin(t_data *data, t_env **envp)
 }
 void ft_herdoc(t_data *data)
 {
-    char *line = NULL;
-    int fd;
+    char *line;
+	char *str;
+	line = NULL;
 	t_file *newfile;
 
     while (data)
@@ -378,44 +387,46 @@ void ft_herdoc(t_data *data)
         {
 			if(newfile->herdoc == 1)
 			{
-
-            fd = open("/tmp/heredoc_tma", O_CREAT | O_WRONLY | O_TRUNC, 0644);
-            if (fd == -1)
+			str = ft_strjoinn(newfile->file,"\n");
+            pipe (newfile->fd);
+            while (1)
             {
-                perror("open");
-                return;
-            }
-            while ((line = readline(">")) != NULL)
-            {
-				if (ft_strcmp(line, newfile->file) == 0)
+				line = ft_readline(">");
+				if (ft_strcmp(line, str) == 0)
                 {
-					printf ("%s\n",newfile->file);
                     free(line);
                     break;
                 }
-                if (write(fd, line, ft_strlen(line)) == -1)
-                {
-                    perror("write");
-                    free(line);
-                    close(fd);
-                    return;
-                }
+                write(newfile->fd[1], line, ft_strlen(line));
                 free(line);
             }
-            close(fd);
+				close(newfile->fd[1]);
 			}
 			newfile = newfile->next;
         }
         data = data->next;
     }
 }
-
+void ft_close (t_data *data)
+{
+	t_file *newfile;
+	while (data)
+	{
+		newfile = data->file;
+		while (newfile)
+		{
+			if (newfile->herdoc == 1)
+				close(newfile->fd[0]);
+			newfile = newfile->next;
+		}
+		data = data->next;
+	}
+}
 void simple_cmd(t_data *data, char **env, t_env **envp)
 {
 	int id;
 	t_var_us var;
 	var.outfd = 0;
-	ft_herdoc(data);
 	if (check_singcmd_build(data, envp,var))
 	{
 		//free_exit(data,*envp);
@@ -437,10 +448,12 @@ void ft_execution(t_data *data, char **env, t_env **envp)
 
 	if (data)
 	{
+		ft_herdoc(data);
 		cont = count_list(data);
 		if (cont == 1)
 			simple_cmd(data, env, envp);
 		else
 			execut_comand(data, env,envp);
+			//ft_close(data);
 	}
 }
