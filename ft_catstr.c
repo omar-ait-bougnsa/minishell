@@ -64,7 +64,7 @@ char	**ft_catstr(char **str, char **str1)
 	var.newstr[var.j] = var.var;
 	var.j++;
 	var.i = 1;
-	while (str1 && str1[var.i])
+	while (str1 && str1[0] && str1[var.i])
 		var.newstr[var.j++] = ft_strdup(str1[var.i++]);
 	ft_free1(str);
 	ft_free1(str1);
