@@ -43,8 +43,8 @@ void	wait_for_children(t_var_us var, t_env *envp)
 	{
 		waitpid(var.id[var.i], &status, 0);
 		var.i++;
-		check_status(status, envp);
 	}
+	check_status(status, envp);
 	free_var(&var);
 }
 
