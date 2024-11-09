@@ -42,7 +42,7 @@ int	ft_token(char c, int *singl, int *doubl)
 		*singl *= -1;
 	if (c == '\"' && *singl != -1)
 		*doubl *= -1;
-	if (ft_strsrch("()&;<>|\t\v\n ", c) && (*singl != -1 && *doubl != -1))
+	if (ft_strsrch("<>|\t\v\n ", c) && (*singl != -1 && *doubl != -1))
 		return (0);
 	else
 		return (1);
